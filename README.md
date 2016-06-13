@@ -1,5 +1,5 @@
 # wall-of-gratitude
-Demo for a WoedPress plugin
+Demo how to write a WordPress plugin
 
 See in action here:
 https://webdevtrust.com/wall-of-gratitude-demo/
