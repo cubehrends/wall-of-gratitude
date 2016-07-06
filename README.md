@@ -1,5 +1,5 @@
 # wall-of-gratitude
-Demo how to write a WordPress plugin
+Conceptional demo about writing a WordPress plugin, shortcode and JavaScript involved.
 
-See in action here:
+See the plugin in action here:
 https://webdevtrust.com/wall-of-gratitude-demo/
