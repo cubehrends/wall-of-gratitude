@@ -69,9 +69,9 @@ add_shortcode( 'wog', 'dankesmauer_shortcode' );
 */
 function dankesmauer_scripts() {
 	global $post;
-	if( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'dankesmauer') ) {
+	if( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'wog') ) {
 		wp_enqueue_style( 'dankesmauer-css', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0' );
-		wp_enqueue_script( 'dankesmauer-js', plugin_dir_url(__FILE__) . 'js/dankesmauer.js', array('jquery'), '1.0', true);
+		wp_enqueue_script( 'dankesmauer-js', plugin_dir_url(__FILE__) . 'js/wog.js', array('jquery'), '1.0', true);
 	}
 }
 add_action( 'wp_enqueue_scripts', 'dankesmauer_scripts');
