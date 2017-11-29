@@ -4,7 +4,7 @@
 *  sorts bricks according to layout
 *
 *  @type	plugin
-*  @date	08/04/16
+*  @date	29/11/17
 *
 *  @param	N/A
 *  @return	N/A
@@ -13,7 +13,6 @@
 	
 	var $container = $( '#wog' );
 	var $row = $( '<div></div>' ).prependTo( $container );
-	var bricks = $container.children( 'span' ).length;
 	var odd;
 
 	var bricksPerRow = Math.round( $container.width() / 128 );
@@ -22,7 +21,7 @@
 	function brick(){
 
 		$row = $container.children(':first');
-		if ( $row.children().length == bricksPerRow ) { $row = $( '<div></div>' ).prependTo( $container ); }
+		if ( $row.children().length === bricksPerRow ) { $row = $( '<div></div>' ).prependTo( $container ); }
 
 		odd = $container.children( 'div' ).length & 1;
 		if ( odd ) {
@@ -39,7 +38,7 @@
 	}
 
 	function finalize() {
-		if ( $container.data( 'popover' ) == 'custom' ) {
+		if ( $container.data( 'popover' ) === 'custom' ) {
 			$('.brick').webuiPopover({trigger: 'hover'});
 		}
 	}
