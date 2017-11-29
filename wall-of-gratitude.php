@@ -1,14 +1,14 @@
 <?php
 /*
-Plugin Name: Wall of Gratitude
-Description: Displays a wall where every brick represents a donor
-Version: 2.2
+Plugin Name: Wir Machen Schule Dankesmauer
+Description: Stellt die Dankesmauer anhand eines Shortcodes mit dem Pfad zur Spenden-CSV-Datei dar.
+Version: 2.3
 Author: Christian Behrends
-Author URI: http://webdevtrust.com/wall-of-gratitude-demo/
+Author URI: https://webdevtrust.com/
 License: GPL
 Copyright: Christian Behrends
 */
-function wog_shortcode( $atts, $content = null ) {
+function dankesmauer_shortcode( $atts, $content = null ) {
 
 	$path = getcwd() . '/wp-content/uploads' . $content;
 	if ( file_exists( $path ) ) {
@@ -18,84 +18,60 @@ function wog_shortcode( $atts, $content = null ) {
 		# processing atts
 		$attributes = shortcode_atts( array(
 			'avada-popover' => '0',
-			'popover-title' => 'Thanks to',
-			'currency' => '$'
+			'danke-text' => 'Danke'
 		), $atts );
 
 		# checking if Avada popover is available
-		if ( $attributes['avada-popover'] ) {
-
-			if ( shortcode_exists( 'popover' ) ) {
-				$wog = '<div id="wog" data-popover="avada">';
-			} else {
-				$wog = '<p style="text-align:center; color:red;">Avada Popover is chosen to display donor-data (avada-popover=\"1\"). Please make sure that you have Avada or an Avada-Child-Theme active when choosing this option.</p><div id="wog">';
-			}
-
+		if ( $attributes['avada-popover'] && ! shortcode_exists( 'fusion_popover' ) ) {
+			$dankesmauer = '<p style="text-align:center; color:red;">Zur Anzeige der Spender ist Avada Popover gewählt (avada-popover=\"1\"). Bitte stellen Sie sicher, dass Avada oder ein Avada-Child-Theme aktiv ist, wenn Sie Avada-Popover benutzen möchten.</p><div id="dankesmauer">';
 		} else {
-
-			$wog = '<div id="wog" data-popover="custom">';
-
+			$dankesmauer = '<div id="dankesmauer">';
 		}
 
-		# reavealing donated amount like +5000$
-		$amount_steps = array(100, 250, 500, 1000, 2500, 5000, 10000, 50000);
-		$initial = 0;
-		$initial_backup = 0;
+		$ort_inital = '';
 
 		# processing csv-rows
-		foreach ( $csv as $bricknum => $brick ) {
+		foreach ( $csv as $key => $brick ) {
 
-			$origin = $brick[0];
-			$name = $brick[1];
-			$amount = $brick[3];
+			$ort = $brick[0];
+			$name =$brick[1];
 
-			# building initial according to amount_steps
-			foreach ( $amount_steps as $stepnum => $step ) {
-				if ( $amount <= $step ) {
-					$initial = $step;
-					break;
-				}
-			}
-			unset($step);
-
-			# display initial only once
-			if ( $initial <> $initial_backup ) {
-				$initial_backup = $initial;
-				$echo_initial = $initial . $attributes['currency'];
+			if ( $ort_inital == strtoupper( $ort[0] ) ) {
+				$echo_initial = '&nbsp;';
 			} else {
-				$echo_initial = '';
+				$ort_inital = strtoupper( $ort[0] );
+				$echo_initial = $ort_inital;
 			}
 
-			$donor = $name . '&nbsp;' . $origin;
+			$spender = $name . ', ' . $ort;
 
 			if ( $attributes['avada-popover'] == 1 ) {
-				$wog .= do_shortcode('[popover title="' . $attributes['popover-title'] . '" title_bg_color="" content="' . $donor . '" content_bg_color="" bordercolor="" textcolor="" trigger="hover" placement="" class="" id=""]' . '<span id="brick-' . $bricknum . '" class="brick" data-title="' . $attributes['popover-title'] . '" data-content="' . $donor . '"><img src="' . plugins_url( 'img/brick.png', __FILE__ ) . '"><span class="initial">' . $echo_initial . '</span></span>' . '[/popover]');
+				$dankesmauer .= do_shortcode('[fusion_popover title="' . $attributes['danke-text'] . '" title_bg_color="" content="' . $spender . '" content_bg_color="" bordercolor="" textcolor="" trigger="hover" placement="" class="" id=""]' . '<span id="brick-' . $key . '" class="brick" style="display: none;">&nbsp;<span class="initial">' . $echo_initial . '</span></span>' . '[/fusion_popover]');
 			} else {
-				$wog .= '<span><span id="brick-' . $bricknum . '" class="brick" data-title="' . $attributes['popover-title'] . '" data-content="' . $donor . '"><img src="' . plugins_url( 'img/brick.png', __FILE__ ) . '"><span class="initial">' . $echo_initial . '</span></span></span>';
+				$dankesmauer .= '<span class="fusion-popover"><span id="brick-' . $key . '" class="brick" style="display: none;">&nbsp;<span class="initial">' . $echo_initial . '</span></span></span>';
 			}
 
 		}
-		$wog .= '</div>';
-		unset($brick);
+		$dankesmauer .= '</div>';
 
 	} else {
 
-		$wog = '<h3>CSV-file ' . $content . ' not found</h3><p style="text-align:center; color:red;">Please enter the path to the CSV-file inside the shortcode-brackets like <blockquote>[wog]/2016/03/wog.csv[/wog]</blockquote></p>';
+		$dankesmauer = '<h3>CSV-Datei für Dankesmauer nicht gefunden</h3><p style="text-align:center; color:red;">Bitte geben Sie im Shortcode den Dateinamen relativ vom Uploads-Verzeichnis an. Beispielsweise <blockquote>[dankesmauer]/2016/03/dankesmauer.csv[/dankesmauer]</blockquote></p>';
 
 	}
 
-	return $wog;
+	return $dankesmauer;
 }
-add_shortcode( 'wog', 'wog_shortcode' );
+add_shortcode( 'dankesmauer', 'dankesmauer_shortcode' );
 
 /*
-	loading scripts only if wog shortcode is used in post
+	loading scripts but only, if dankesmauser shortcode is used in post
 */
-function wog_scripts() {
+function dankesmauer_scripts() {
 	global $post;
-	if( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'wog') ) {
-		wp_enqueue_style( 'wog-css', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0' );
-		wp_enqueue_script( 'wog-js', plugin_dir_url(__FILE__) . 'js/wog.js', array('jquery'), '1.0', true);
+	if( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'dankesmauer') ) {
+		wp_enqueue_style( 'dankesmauer-css', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0' );
+		wp_enqueue_script( 'dankesmauer-js', plugin_dir_url(__FILE__) . 'js/dankesmauer.js', array('jquery'), '1.0', true);
 	}
 }
-add_action( 'wp_enqueue_scripts', 'wog_scripts');
+add_action( 'wp_enqueue_scripts', 'dankesmauer_scripts');
