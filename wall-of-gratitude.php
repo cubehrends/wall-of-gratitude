@@ -62,7 +62,7 @@ function dankesmauer_shortcode( $atts, $content = null ) {
 
 	return $dankesmauer;
 }
-add_shortcode( 'dankesmauer', 'dankesmauer_shortcode' );
+add_shortcode( 'wog', 'dankesmauer_shortcode' );
 
 /*
 	loading scripts but only, if dankesmauser shortcode is used in post
