@@ -11,7 +11,7 @@
 */
 (function($) {
 	
-	var $container = $( '#wog' );
+	var $container = $( '#dankesmauer' );
 	var $row = $( '<div></div>' ).prependTo( $container );
 	var odd;
 
